@@ -1,0 +1,5 @@
+cd ~/Documents/Books/Learn/
+
+launch --title "books"
+focus
+focus_os_window

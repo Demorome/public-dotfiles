@@ -1,0 +1,198 @@
+# man kitty.conf
+
+# Ctrl+Shift is the default kitty_mod for keybinds.
+#
+# kitty_mod+F1 to open documentation.
+# kitty_mod+F2 to open kitty.conf (opens in a new window by default).
+# kitty_mod+F5 to reload config.
+# kitty_mod+F6 to see current config values.
+
+# Credits to @linkarzu for some configs:
+# https://github.com/linkarzu/dotfiles-latest/blob/main/kitty/kitty.conf
+#
+# Other inspiration:
+# https://github.com/Delapouite/dot-in-the-sky/blob/master/.config/kitty/kitty.conf
+
+#: Allow other programs to control kitty. If you turn this on, other
+#: programs can control all aspects of kitty, including sending text
+#: to kitty windows, opening new windows, closing windows, reading the
+#: content of windows, etc. Note that this even works over SSH
+#: connections. The default setting of no prevents any form of remote
+#: control. The meaning of the various values are:
+#: password
+#:     Remote control requests received over both the TTY device and the socket
+#:     are confirmed based on passwords, see remote_control_password.
+#: socket-only
+#:     Remote control requests received over a socket are accepted
+#:     unconditionally. Requests received over the TTY are denied.
+#:     See listen_on.
+#: socket
+#:     Remote control requests received over a socket are accepted
+#:     unconditionally. Requests received over the TTY are confirmed based on
+#:     password.
+#: no
+#:     Remote control is completely disabled.
+#: yes
+#:     Remote control requests are always accepted.
+# NOTE: Enable remote control so external programs (e.g. sketchybar)
+# can query Kitty.
+# The 'listen_on' directive below is ignored unless this is set to 'yes'
+# 'socket', or 'socket-only'.
+# My automation already uses sockets; it does not need remote control over the TTY.
+# With 'yes', malicious output (e.g. from cat or SSH) can execute commands via
+# Kitty remote-control escape sequences: https://github.com/kovidgoyal/kitty/issues/2084
+# Leaned about this by Brodie Robertson https://youtu.be/DYu9391lVP0?si=tfOlj9l9O_3CsLV7
+allow_remote_control socket-only
+
+#: Listen to the specified socket for remote control connections. Note
+#: that this will apply to all kitty instances. It can be overridden
+#: by the kitty --listen-on command line option. For UNIX sockets,
+#: such as unix:${TEMP}/mykitty or unix:@mykitty (on Linux).
+#: Environment variables are expanded and relative paths are resolved
+#: with respect to the temporary directory. If {kitty_pid} is present,
+#: then it is replaced by the PID of the kitty process, otherwise the
+#: PID of the kitty process is appended to the value, with a hyphen.
+#: For TCP sockets such as tcp:localhost:0 a random port is always
+#: used even if a non-zero port number is specified.  See the help for
+#: kitty --listen-on for more details. Note that this will be ignored
+#: unless allow_remote_control is set to either: yes, socket or
+#: socket-only. Changing this option by reloading the config is not
+#: supported.
+# NOTE: Create a UNIX socket for remote control. This lets external scripts (like
+# sketchybar) run `kitten @ --to unix:/tmp/kitty-<pid>` and retrieve titles.
+# The actual socket will be created as /tmp/kitty-<pid>.
+listen_on unix:/tmp/kitty
+
+confirm_os_window_close 0
+
+# change to x11 or wayland or leave auto
+linux_display_server wayland
+
+scrollback_lines 2000
+wheel_scroll_min_lines 1
+
+enable_audio_bell no
+
+scrollback_pager kak -ro
+# scrollback_pager nvim --cmd 'set eventignore=FileType' +'nnoremap q ZQ' +'call nvim_open_term(0, {})' +'set nomodified nolist' +'$' -
+
+#== Keymaps
+map kitty_mod+enter new_os_window_with_cwd
+# kitty_mod+? for keybind help.
+map kitty_mod+/ command_palette
+map kitty_mod+space command_palette
+
+#=== Modes
+# https://sw.kovidgoyal.net/kitty/mapping/#modal-mappings
+
+#==== Filter Mode
+map --new-mode filter --on-action end kitty_mod+f
+map --mode filter esc pop_keyboard_mode
+
+map --mode filter l launch --stdin-source=@last_cmd_output --stdin-add-formatting /usr/bin/fzf --ansi --tac --no-sort
+map --mode filter s launch --stdin-source=@screen_scrollback --stdin-add-formatting /usr/bin/fzf --ansi --tac --no-sort
+
+#==== Session Mode
+
+##############################################################################
+#      Kitty Sessions section (To replace tmux), watch this video:           #
+#                  https://youtu.be/lWKjvWvjk4Y                              #
+##############################################################################
+
+# Save current state to a session file (prompts for path, opens in $EDITOR)
+map ctrl+shift+s save_as_session --use-foreground-process --relocatable
+
+# Path to a session file to use for all kitty instances. Can be
+# overridden by using the kitty --session =none command line option
+# for individual instances. See sessions
+# <https://sw.kovidgoyal.net/kitty/sessions/> in the kitty
+# documentation for details.
+#
+# Note that relative paths are interpreted
+# with respect to the kitty config directory. Environment variables
+# in the path are expanded. Changing this option by reloading the
+# config is not supported. Note that if kitty is invoked with command
+# line arguments specifying a command to run, this option is ignored.
+startup_session $HOME/.dotfiles/kitty/sessions/notes.kitty-session
+
+map --new-mode sesh --on-action end ctrl+a
+map --mode sesh esc pop_keyboard_mode
+
+map --mode sesh d goto_session $HOME/.dotfiles/kitty/sessions/dotfiles.kitty-session
+map --mode sesh n goto_session $HOME/.dotfiles/kitty/sessions/notes.kitty-session
+map --mode sesh c goto_session $HOME/.dotfiles/kitty/sessions/code.kitty-session
+
+include ~/.dotfiles-private/kitty/work.conf
+
+# action_alias launch_daily_note launch /bin/zsh -c "$HOME/github/dotfiles-latest/scripts/macos/mac/misc/300-dailyNote.sh"
+# map ctrl+b>i launch_daily_note
+
+# I call this alias after switching to the alternate session
+# action_alias update_kitty_name launch --type=background /bin/zsh -c '"$HOME/github/dotfiles-latest/sketchybar/felixkratz-linkarzu/plugins/kitty_name.sh"'
+# map ctrl+b>r update_kitty_name
+
+# Switch to alternate kitty session or previous session
+map --mode sesh l goto_session -1
+# map ctrl+b>l combine : goto_session -1 : update_kitty_name
+
+# TODO: Fix the script!
+# action_alias launch_session_select launch --type=overlay /bin/zsh -c "$HOME/github/dotfiles-latest/kitty/scripts/kitty-list-sessions.sh"
+# map ctrl+b>s launch_session_select
+
+# action_alias launch_zoxide_session launch --type=overlay /bin/zsh -c "$HOME/github/dotfiles-latest/kitty/scripts/kitty-zoxide-session.sh"
+# map ctrl+b>z launch_zoxide_session
+
+# Browse and select from the list of known projects defined via goto_session commands
+map --mode sesh a goto_session
+map --mode sesh ctrl+a goto_session
+
+
+# BEGIN_KITTY_VISUALS
+# window_padding_width 4
+window_padding_width 0
+
+#background_opacity 1
+#dynamic_background_opacity 1
+
+tab_bar_edge top
+tab_bar_style powerline
+
+# These should be set by a theme anyways, so only specify these to override.
+#selection_foreground #ffffff
+#selection_background #FF00FF
+#foreground #dddddd
+#background #141423
+#cursor #dddddd
+
+# Animated cursor
+cursor_trail 1
+
+# you can choose themes from $HOME/.config/kitty/kitty-themes/
+include ./kitty-themes/00-Default.conf
+
+# BEGIN_KITTY_FONTS
+font_size 15
+font_family      family='JetBrainsMono Nerd Font' style=Thin
+bold_font        auto
+italic_font      family='JetBrainsMono Nerd Font' style='Light Italic'
+bold_italic_font auto
+# Makes editing ligature text easier when cursor is over it.
+disable_ligatures cursor
+# END_KITTY_FONTS
+
+# END_KITTY_VISUALS
+
+# BEGIN_KITTY_LAYOUT
+# Includes stuff like sessions, tiled windows, etc.
+enabled_layouts tall:bias=50;full_size=1;mirrored=false
+
+# window_title_template TODO
+# END_KITTY_LAYOUT
+
+
+
+
+# BEGIN_KITTY_THEME
+# Constant Perceptual Luminosity (dark)
+include current-theme.conf
+# END_KITTY_THEME

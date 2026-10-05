@@ -1,0 +1,7 @@
+cd ~/Projects/Code/
+
+# How to get the title from within kitty:
+# kitten @ ls | jq -r '.[] | select(.is_focused) | .tabs[] | select(.is_focused) | .windows[] | select(.is_focused) | .title'
+launch --title "code"
+focus
+focus_os_window

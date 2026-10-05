@@ -1,0 +1,5 @@
+cd ~/Projects/Music/
+
+launch --title "music-making"
+focus
+focus_os_window

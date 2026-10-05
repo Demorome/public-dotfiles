@@ -1,0 +1,5 @@
+cd ~/Music/
+
+launch --title "music-listening"
+focus
+focus_os_window

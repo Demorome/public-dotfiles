@@ -1,0 +1,44 @@
+#:schema https://yazi-rs.github.io/schemas/keymap.json
+
+# Credits to https://github.com/kohane27/dotfiles-yazi/blob/main/yazi/yazi/keymap.toml
+
+[mgr]
+prepend_keymap = [
+  { on = "?", run = [ "help" ], desc = "Show help" },
+
+  { on = "<C-o>",                  run = "back",                                               desc = "Back to the last directory" },
+  { on = "<C-i>",                  run = "forward",                                            desc = "Forward to next directory" },
+
+# ╭──────────────────────────────────────────────────────────╮
+# │ Goto                                                     │
+# ╰──────────────────────────────────────────────────────────╯
+  { on = [ "g", "v" ], run = "cd ~/Videos", desc = "Videos" },
+  # { on = [ "g", "T" ],       run = "cd ~/Temp",                                      desc = "Go to Temp" },
+  { on = [ "g", "c" ], run = "cd ~/Projects/Code", desc = "Code" },
+  { on = [ "g", "p" ], run = "cd ~/Projects", desc = "Projects" },
+  { on = [ "g", "P" ], run = "cd ~/Pictures", desc = "Pictures" },
+  { on = [ "g", "a" ], run = "cd ~/Projects/Assets", desc = "Assets" },
+  { on = [ "g", "A" ], run = "cd ~/AUR/", desc = "AUR" },
+  { on = [ "g", "b" ], run = "cd ~/Documents/Books", desc = "Books" },
+
+  { on = [ "g", "B" ], run = "cd /usr/local/bin", desc = "/bin (scripts)" },
+  { on = [ "g", "s" ], run = "cd ~/.local/share", desc = "/share" },
+
+  # Dotfiles
+  { on = [ "g", "d", "g" ], run = "cd /.dotfiles/etc", desc = "Global Dotfiles" },
+  { on = [ "g", "d", "u" ], run = "cd ~/.dotfiles/.config", desc = "User Dotfiles" },
+  { on = [ "g", "d", "U" ], run = "cd ~/.dotfiles-private/.config", desc = "Private User Dotfiles" },
+  { on = [ "g", "S", "g" ], run = "cd /.dotfiles/etc/systemd/system", desc = "Global Services" },
+  { on = [ "g", "S", "u" ], run = "cd /.dotfiles/etc/systemd/user", desc = "User Services" },
+
+    ### Plugins
+
+    # https://github.com/yazi-rs/plugins/tree/main/smart-enter.yazi
+    # NOTE: This plugin will probably break future "archives as directories" feature:
+    # https://yazi-rs.github.io/docs/faq/#why-separate-open-enter
+    {
+        on   = "l",
+        run  = "plugin smart-enter",
+        desc = "Enter the child directory, or open the file"
+    },
+]

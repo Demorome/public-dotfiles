@@ -1,0 +1,5 @@
+cd ~/Documents/Notes/orgfiles
+
+launch --title "notes"
+focus
+focus_os_window

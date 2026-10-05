@@ -1,0 +1,23 @@
+#:schema https://yazi-rs.github.io/schemas/yazi.json
+
+[mgr]
+ratio = [ 0, 4, 4 ]
+sort_by = "natural"
+show_hidden = true
+
+# Credits to @goldenlemur: https://www.reddit.com/r/linux4noobs/comments/1dbqdnl/comment/lvhjobz/
+# FIXME: This still opens it in a new window for some reason!!
+[opener]
+read_book = [
+    { run = 'bookokrat %s', desc = "Read", block = true, for = "unix" },
+]
+
+[open]
+prepend_rules = [
+    {mime = "application/pdf", use = [ "read_book", "reveal" ] },
+    {mime = "application/epub+zip", use = [ "read_book", "reveal" ] },
+]
+
+[[plugin.prepend_previewers]]
+mime = "application/epub+zip"
+run = "epub-preview"

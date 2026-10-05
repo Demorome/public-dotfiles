@@ -1,0 +1,5 @@
+cd ~
+
+launch --title "quick-terminal"
+focus
+focus_os_window

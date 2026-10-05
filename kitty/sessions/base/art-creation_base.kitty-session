@@ -1,0 +1,5 @@
+cd ~/Projects/Art/
+
+launch --title "art"
+focus
+focus_os_window
