@@ -25,9 +25,9 @@ prepend_keymap = [
   { on = [ "g", "s" ], run = "cd ~/.local/share", desc = "/share" },
 
   # Dotfiles
-  { on = [ "g", "d", "g" ], run = "cd /.dotfiles/etc", desc = "Global Dotfiles" },
-  { on = [ "g", "d", "u" ], run = "cd ~/.dotfiles/.config", desc = "User Dotfiles" },
-  { on = [ "g", "d", "U" ], run = "cd ~/.dotfiles-private/.config", desc = "Private User Dotfiles" },
+  { on = [ "g", "D", "g" ], run = "cd /.dotfiles/etc", desc = "Global Dotfiles" },
+  { on = [ "g", "D", "u" ], run = "cd ~/.dotfiles/.config", desc = "User Dotfiles" },
+  { on = [ "g", "D", "U" ], run = "cd ~/.dotfiles-private/.config", desc = "Private User Dotfiles" },
   { on = [ "g", "S", "g" ], run = "cd /.dotfiles/etc/systemd/system", desc = "Global Services" },
   { on = [ "g", "S", "u" ], run = "cd /.dotfiles/etc/systemd/user", desc = "User Services" },
 
