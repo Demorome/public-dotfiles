@@ -41,4 +41,15 @@ prepend_keymap = [
         run  = "plugin smart-enter",
         desc = "Enter the child directory, or open the file"
     },
+
+    {
+        on =  [ "g", "i" ], # gi(t)
+        run = "plugin lazygit",
+        desc = "LazyGit"
+    },
+    {
+        on =  [ "<space>", "g" ],
+        run = "plugin lazygit",
+        desc = "LazyGit"
+    },
 ]
